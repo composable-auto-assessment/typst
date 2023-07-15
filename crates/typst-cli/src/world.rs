@@ -129,6 +129,11 @@ impl World for SystemWorld {
         self.slot(id)?.file()
     }
 
+    fn write(&self, id: FileId, data: &[u8]) -> FileResult<()> {
+        let p = self.root.join_rooted(id.path()).ok_or(FileError::AccessDenied)?;
+        fs::write(&p, data).map_err(|f| FileError::from_io(f, &p))
+    }
+
     fn font(&self, index: usize) -> Option<Font> {
         self.fonts[index].get()
     }
